@@ -1,11 +1,13 @@
 from dotenv import load_dotenv
 from langgraph.graph import StateGraph, START, END
 
-from state import State
 from agents.coordinator import coordinator
+from nodes import traveller_node
+from state import State
 from nodes import (
     human_node,
-    check_exit_condition
+    check_exit_condition,
+    coordinator_routing
 )
 
 load_dotenv(override=True)  # Override, so it would use your local .env file
@@ -20,21 +22,20 @@ def build_graph():
     # TODO: Connect the graph
     builder.add_node("human", human_node)
     builder.add_node("coordinator", coordinator)
+    builder.add_node("traveller", traveller_node)
 
     builder.add_edge(START, "human")
     builder.add_conditional_edges("human", check_exit_condition, {
         "END": END,
         "coordinator": "coordinator"
         })
-
-    builder.add_edge("coordinator", "human")
     
-    # builder.add_conditional_edges("coordinator", coordinator_routing, {
-    #     "participant": "participant",
-    #     "human": "human"
-    #     })
+    builder.add_conditional_edges("coordinator", coordinator_routing, {
+        "traveller": "traveller",
+        "human": "human"
+        })
     
-    # builder.add_edge("participant", "coordinator")
+    builder.add_edge("traveller", "coordinator")
 
     # builder.add_edge("summarizer", END)
 
@@ -43,19 +44,22 @@ def build_graph():
 
 def main():
     print("Chat initiated.")
-    # print("=== SINGAPORE KOPITIAM CHATTER ===")
-    # print("Chat with our kopitiam regulars! Type 'exit' to end.\n")
-    # print("Setting: A bustling Singapore kopitiam on a typical afternoon...")
-    # print("The regulars are here - Uncle Ah Seng at his drinks stall,")
-    # print("Mei Qi with her phone, Bala checking football scores,")
-    # print("and Dr. Tan sipping his kopi-o.\n")
+    print("=== UPCOMING TRIP DISCUSSION ===")
+    print("Chat with our amazing explorers! Type 'exit' to end.\n")
+    print("Setting: A casual dinner in a typical evening...")
+    print("Three travel enthusiasts are discussing their next trip plan.")
+    print("Ken is very excited about exploring new places,")
+    print("Melody is busy scrolling her phone for new items to collect all over the world,")
+    print("and Gary is reading up a catalogue on historical sites to visit.\n")
 
     graph = build_graph()
 
     print(graph.get_graph().draw_ascii())
 
     initial_state = State(
-        messages=[]
+        messages=[],
+        volley_msg_left=0,
+        next_speaker=None
     )
 
     try:
