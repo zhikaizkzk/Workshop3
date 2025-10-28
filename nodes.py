@@ -1,5 +1,6 @@
 from typing import Literal
 from agents import traveller
+from agents import flight_agent
 from state import State
 
 
@@ -32,7 +33,7 @@ def check_exit_condition(state: State) -> Literal["summarizer", "coordinator"]:
         last_message = messages[-1]
         content = last_message.get("content", "").lower()
         if "exit" in content:
-            return "END"
+            return "flight_agent"
         
     return "coordinator"
 
@@ -67,3 +68,16 @@ def traveller_node(state: State) -> dict:
         return {"messages": messages}
 
     return {}
+
+def flight_agent_node(state: State) -> dict:
+    """
+    Summarizer node - generates and displays conversation summary.
+    """
+    print("\n=== CONVERSATION ENDING ===\n")
+
+    # Generate and print summary
+    flight_plan = flight_agent(state)
+    print(flight_plan)
+    print("\nThank you! Come back to flight planner soon!")
+
+    return {}  # Empty update to end

@@ -1,6 +1,7 @@
 from dotenv import load_dotenv
 from langgraph.graph import StateGraph, START, END
 
+from agents import flight_agent
 from agents.coordinator import coordinator
 from nodes import traveller_node
 from state import State
@@ -23,10 +24,11 @@ def build_graph():
     builder.add_node("human", human_node)
     builder.add_node("coordinator", coordinator)
     builder.add_node("traveller", traveller_node)
+    builder.add_node("flight_agent", flight_agent)
 
     builder.add_edge(START, "human")
     builder.add_conditional_edges("human", check_exit_condition, {
-        "END": END,
+        "flight_agent": "flight_agent",
         "coordinator": "coordinator"
         })
     
@@ -36,6 +38,8 @@ def build_graph():
         })
     
     builder.add_edge("traveller", "coordinator")
+
+    builder.add_edge("flight_agent", END)
 
     # builder.add_edge("summarizer", END)
 
