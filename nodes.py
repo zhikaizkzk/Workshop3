@@ -19,7 +19,7 @@ def human_node(state: State) -> dict:
     messages.append(human_message)
     return {
         "messages": messages,
-        "volley_msg_left": 5  # Set volley count
+        "volley_msg_left": 3  # Set volley count
     }
 
 
@@ -77,7 +77,8 @@ def flight_agent_node(state: State) -> dict:
 
     # Generate and print summary
     flight_plan = flight_agent(state)
-    print(flight_plan)
+    print("i am out of it")
+    print(flight_plan["internalsummary"])  # access dict key safely
     print("\nThank you! Come back to flight planner soon!")
 
     return {}  # Empty update to end

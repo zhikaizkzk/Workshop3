@@ -18,7 +18,6 @@ def flights_timing() -> str:
         response = requests.get(url)
         data = response.json()
         response.raise_for_status()
-        print(data)
 
         # soup = BeautifulSoup(response.text, "xml")
         #
@@ -71,13 +70,5 @@ def flights_timing() -> str:
         pass
 
     # Fallback news if RSS fetch fails
-    result += "1. Local kopitiam wins best kopi award\n"
-    result += "   Traditional coffee-making skills recognized nationally\n\n"
-    result += "2. New MRT line to connect heartlands\n"
-    result += "   Enhanced connectivity for residential areas\n\n"
-    result += "3. Singapore weather: Monsoon season expected\n"
-    result += "   Heavy rains forecasted for the coming weeks"
-    return result
+    return data
 
-if __name__ == "__main__":
-    flights_timing()
