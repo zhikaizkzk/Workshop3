@@ -1,73 +1,51 @@
+import json
+import os
+
 import httpx
 import requests
 from bs4 import BeautifulSoup, Tag
-
+from utils import debug
 
 def flights_timing() -> str:
     """
     Returns a few options of flights
     """
 
-    result = "Options for flights:\n\n"
 
     try:
         # Add timeout back and debug
         # limit to singapore airline first
         api_key = ""
+        if not api_key:
+            raise ValueError("Missing API key for AviationStack")
         url = f"http://api.aviationstack.com/v1/flights?access_key={api_key}&airline_name={"Singapore Airlines"}"
         response = requests.get(url)
         data = response.json()
         response.raise_for_status()
 
-        # soup = BeautifulSoup(response.text, "xml")
-        #
-        # items = soup.find_all("item", limit=10)
+    except Exception as e:
+        # Log error for debugging
+        debug(f"[ERROR] flights_timing() failed: {str(e)}")
 
-    #     if items:
-    #         news_items = []
-    #         for item in items:
-    #             try:
-    #                 # Ensure item is a Tag
-    #                 if not isinstance(item, Tag):
-    #                     continue
-    #
-    #                 # Extract title
-    #                 title_elem = item.find("title")
-    #                 title = title_elem.text.strip() if title_elem else ""
-    #
-    #                 # Extract description/snippet
-    #                 desc_elem = item.find("description")
-    #                 snippet = desc_elem.text.strip() if desc_elem else ""
-    #
-    #                 # Clean snippet - remove HTML if any
-    #                 if snippet:
-    #                     # Parse snippet to remove any HTML tags
-    #                     snippet_soup = BeautifulSoup(snippet, "html.parser")
-    #                     snippet = snippet_soup.get_text().strip()
-    #
-    #                 if title:
-    #                     news_items.append({
-    #                         "title": title,
-    #                         "snippet": snippet
-    #                     })
-    #
-    #             except Exception:
-    #                 continue  # Skip problematic items
-    #
-    #         if news_items:
-    #             for i, item in enumerate(news_items, 1):
-    #                 result += f"{i}. {item['title']}\n"
-    #                 if item['snippet']:
-    #                     result += f"   {item['snippet']}\n"
-    #                 result += "\n"
-    #             return result.strip()
-    #
-    except httpx.TimeoutException:
-         pass
-    except httpx.HTTPError:
-         pass
-    except Exception:
-        pass
+        # Fallback to local file
+        fallback_path = "dummydata/flight_timing.txt"
+        print(os.getcwd())
+        if os.path.exists(fallback_path):
+            debug(f"[INFO] Using fallback data from {fallback_path}")
+            try:
+                with open(fallback_path, "r", encoding="utf-8") as f:
+                    fallback_data = f.read().strip()
+                    try:
+                        parsed = json.loads(fallback_data)
+                        return json.dumps(parsed, indent=2)
+                    except json.JSONDecodeError:
+                        return fallback_data
+            except Exception as read_err:
+                debug(f"[ERROR] Could not read fallback file: {str(read_err)}")
+                return "No flight data available due to read failure."
+        else:
+            debug("[ERROR] No fallback data file found.")
+            return "No flight data available. Both API and fallback failed."
 
     # Fallback news if RSS fetch fails
     return data

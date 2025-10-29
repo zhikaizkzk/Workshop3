@@ -74,10 +74,10 @@ Possible actions are:
 {available_actions}
 
 You only have access to the tools/actions listed above. Do not call tools that you do not have access to.
-
+The defined [country] is based on the user input. you will need to gather the details from there
 Example session:
 
-Thought: I want to travel to Thailand
+Thought: lets have a spontaneous trip to [country] based on the earliest flight available, anyone??
 Action: flight
 
 You will be called again with:
@@ -141,7 +141,6 @@ Please provide a flight plan of this group discussion."""
             # If model reaches a Message (final answer)
             if "Message:" in content:
                 message_text = re.sub(r"^.*Message:\s*", "", content, flags=re.S)
-                print("yup here")
                 return {"internalsummary": f"=== FLIGHT PLAN SUMMARY ===\n\n{message_text.strip()}"}
             # if isinstance(response.content, list):
             #     summary = " ".join(str(item) for item in response.content).strip()

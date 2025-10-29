@@ -15,12 +15,11 @@ load_dotenv(override=True)  # Override, so it would use your local .env file
 
 def build_graph():
     """
-    Build the LangGraph workflow.
+    Build the LangGraph workfthlow.
     """
 
     builder = StateGraph(State)
 
-    # TODO: Connect the graph
     builder.add_node("human", human_node)
     builder.add_node("coordinator", coordinator)
     builder.add_node("traveller", traveller_node)
@@ -41,7 +40,6 @@ def build_graph():
 
     builder.add_edge("flight_agent", END)
 
-    # builder.add_edge("summarizer", END)
 
     return builder.compile()
 

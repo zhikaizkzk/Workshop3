@@ -19,7 +19,7 @@ def human_node(state: State) -> dict:
     messages.append(human_message)
     return {
         "messages": messages,
-        "volley_msg_left": 3  # Set volley count
+        "volley_msg_left": 5  # Set volley count
     }
 
 
